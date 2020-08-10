@@ -5,34 +5,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Registration | E-File</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="./assets/css/mdb.min.css" rel="stylesheet">
+    <style>
+        img {
+            height: 150px;
+            width: auto;
+        }
+
+        .card-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            width: 40rem;
+        }
+
+        .login-btn {
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .showHidePassword {
+            cursor: pointer;
+        }
+
+        .showHidePassword:hover {
+            filter: brightness(150%);
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
         <form action="/register" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <input class="" type="text" name="username" />
-            </div>
-            <div class="form-group">
-                <input class="" type="password" name="password" />
-            </div>
-            <div class="form-group">
-                <input class="" type="submit" value="Daftar" />
+            <div class="card-container">
+                <div class="mx-auto card p-2 p-lg-5">
+                    <div class="card-body">
+                        <div class="card-title row">
+                            <div class="col-lg-4 mb-4">
+                                <img src="./assets/img/upload.svg" />
+                            </div>
+                            <div class="col-lg-8 my-auto">
+                                <h3>E-File</h3>
+                                <h6>Akses dokumen digital anda tidak pernah semudah ini.</h6>
+                            </div>
+                        </div>
+                        <div class="card-text">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" class="form-control" name="username" required autofocus />
+                            <label class="mt-2" for="password">Password</label>
+                            <div class="input-group">
+                                <input type="password" id="password" class="form-control" name="password" required />
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="addon-wrapping" onclick="showHidePassword()"><i
+                                            class="far fa-eye showHidePassword"></i></span>
+                                </div>
+                            </div>
+                            <div class="login-btn">
+                                <input class="btn btn-blue" type="submit" value="Daftar" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-        crossorigin="anonymous"></script>
+    <!-- JQuery -->
+    <script type="text/javascript" src="./assets/js/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="./assets/js/popper.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="./assets/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="./assets/js/mdb.min.js"></script>
+    <script>
+        let showPassword = false;
+        function showHidePassword() {
+            if ($(".showHidePassword").hasClass("fa-eye")) {
+                showPassword = true;
+                $(".showHidePassword").removeClass("fa-eye").addClass("fa-eye-slash");
+                $("#password").attr("type", "text");
+            }
+            else {
+                showPassword = false;
+                $(".showHidePassword").removeClass("fa-eye-slash").addClass("fa-eye");
+                $("#password").attr("type", "password");
+            }
+        }
+    </script>
 </body>
 
 </html>

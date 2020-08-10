@@ -1,7 +1,9 @@
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
+const hbs = require("hbs");
 const upload = require("multer")();
+const cookieParser = require("cookie-parser");
 const mysql = require("mysql");
 const app = express();
 // prettier-ignore
@@ -17,36 +19,50 @@ db.connect((err) => {
   console.log("Successfully connected to MySQL!");
 });
 
+hbs.registerHelper('json', function(context) {
+  return JSON.stringify(context);
+});
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.set("views", path.join(__dirname, "src/views"));
 app.set("view engine", "hbs");
 app.use("/assets", express.static("assets"));
 
 app.get("/dashboard", (req, res) => {
+  const currentUser = req.cookies.user;
+  if (typeof currentUser == "undefined") return res.redirect("/login");
+
   db.query(
-    "SELECT id_dokumen, nama FROM dokumen WHERE accept=0 AND decline=0",
+    "SELECT id_dokumen, nama, tanggal_masuk FROM dokumen WHERE accept=0 AND decline=0",
     (err, result) => {
-      console.log(result);
       res.render("dashboard", { documents: result });
     }
   );
 });
 
+app.get("/logout", (req, res) => {
+  res.clearCookie("user");
+  res.clearCookie("level");
+  res.redirect("/login");
+});
+
 app.post("/validate-doc", (req, res) => {
-  const { status, document_id } = req.body;
+  const { status, document_id, userLevel } = req.body;
+  if (!(userLevel > 0)) return res.json({ status: 0 });
   if (status == "accept") {
     db.query(
       `UPDATE dokumen SET accept=1 WHERE id_dokumen=${document_id}`,
       (_) => {
-        res.send("success");
+        res.json({ status: 1 });
       }
     );
   } else {
     db.query(
       `UPDATE dokumen SET decline=1 WHERE id_dokumen=${document_id}`,
       (_) => {
-        res.send("success");
+        res.json({ status: 1 });
       }
     );
   }
@@ -64,23 +80,38 @@ app.post("/upload-doc", upload.single("dokumen"), (req, res) => {
   db.query(
     `INSERT INTO dokumen(nama, kategori, tanggal_masuk, file_blob, file_type) VALUES('${fileName}', '${kategori}','${tanggalMasuk}','${fileBlob}','${fileType}')`,
     (err, result) => {
-      if (err) return console.error();
+      if (err)
+        return res.redirect(
+          `/dashboard?show=true&message=${encodeURIComponent(
+            "Terjadi kesalahan!"
+          )}&color=danger`
+        );
+      res.redirect(
+        `/dashboard?show=true&message=${encodeURIComponent(
+          "Sukses meng-upload dokumen!"
+        )}&color=success`
+      );
     }
   );
 });
 
 app.get("/login", (req, res) => {
+  const currentUser = req.cookies.user;
+  if (typeof currentUser != "undefined") return res.redirect("/dashboard");
   res.render("login");
 });
 
 app.post("/login", upload.none(), (req, res) => {
   const { username, password } = req.body;
   db.query(
-    `SELECT username, password FROM user WHERE username='${username}' AND password='${password}'`,
+    `SELECT username, password, level FROM user WHERE username='${username}' AND password='${password}'`,
     (err, result) => {
       if (!result.length)
         return res.send("Username atau Password tidak tepat!");
-      res.send(result);
+      // one hour session
+      res.cookie("user", username, { maxAge: 3600000 });
+      res.cookie("level", result[0].level, { maxAge: 3600000 });
+      res.redirect("/dashboard");
     }
   );
 });
@@ -90,6 +121,8 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", upload.none(), (req, res) => {
+  const currentUser = req.cookies.user;
+  if (typeof currentUser == "undefined") return res.redirect("/login");
   const { username, password } = req.body;
   db.query(
     `INSERT INTO user(username, password, level) VALUES('${username}', '${password}', 1)`,
