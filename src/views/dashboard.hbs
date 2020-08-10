@@ -9,10 +9,9 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
     <!-- Google Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
-    <!-- Bootstrap core CSS -->
-    <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Material Design Bootstrap -->
-    <link href="./assets/css/mdb.min.css" rel="stylesheet">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
     <style>
         .navbar {
             background-color: #1565c0;
@@ -50,72 +49,64 @@
 </head>
 
 <body>
-    <div class="alert popup-msg" role="alert">
+    <div role="alert">
         <span id="message"></span>
     </div>
-    <div class="container">
+    <div class="container-fluid">
         <header>
 
-            <nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
-                <button class="toggler-example" type="button" data-toggle="collapse" data-target="#side-nav"
-                    aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation"><span
-                        class="dark-blue-text"><i class="fas fa-bars fa-1x"></i></span></button>
-                <!-- Collapsible content -->
-                <div class="collapse" id="side-nav">
-
-                    <div class="side-nav">
-                        <div class="navbar-nav">
-                            <div class="nav-item">Upload</div>
-                            <div class="nav-item">Manager</div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="navbar-nav mr-auto d-flex flex-row">
-                    {{!-- <div class="nav-item">
-                        <a class="nav-link" href="#">Upload</a>
-                    </div>
-                    <div class="nav-item">
-                        <a class="nav-link" href="#">Manager</a>
-                    </div> --}}
-                </div>
-                <div class="navbar-nav">
-                    <div class="nav-item">
-                        <a class="nav-link btn btn-sm btn-white text-dark px-3" href="/logout">Logout</a>
-                    </div>
+            <nav>
+                <div class="nav-wrapper">
+                    <a href="#" class="brand-logo">Logo</a>
+                    <ul id="nav-mobile" class="right hide-on-med-and-down">
+                        <li><a href="sass.html">Sass</a></li>
+                        <li><a href="badges.html">Components</a></li>
+                        <li><a href="collapsible.html">JavaScript</a></li>
+                    </ul>
                 </div>
             </nav>
+
+            <ul id="slide-out" class="sidenav">
+                <li>
+                    <div class="user-view">
+                        <div class="background">
+                            <img src="images/office.jpg">
+                        </div>
+                        <a href="#user"><img class="circle" src="images/yuna.jpg"></a>
+                        <a href="#name"><span class="white-text name">John Doe</span></a>
+                        <a href="#email"><span class="white-text email">jdandturk@gmail.com</span></a>
+                    </div>
+                </li>
+                <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
+                <li><a href="#!">Second Link</a></li>
+                <li>
+                    <div class="divider"></div>
+                </li>
+                <li><a class="subheader">Subheader</a></li>
+                <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
+            </ul>
+            <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+
 
         </header>
 
 
-        <div class="row content">
-            <div class="col-12 d-flex justify-content-center my-4 my-lg-5">
-                <img src="./assets/img/e-file.svg" class="img-fluid e-file-icon" />
-            </div>
-            <form class="col-lg-6 mx-auto" action="/upload-doc" method="post" enctype="multipart/form-data">
-                <div class="col-12 p-3">
-                    <div class="input-group">
-                        <div class="custom-file">
-                            <input type="file" name="dokumen" class="custom-file-input" required />
-                            <label class="custom-file-label">Pilih Dokumen</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 p-3">
-                    <select name="kategori" class="browser-default custom-select" required>
-                        <option value="" disabled selected>-Kategori-</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                    </select>
-                </div>
-                <div class="col-12 submit-btn">
-                    <input class="btn btn-blue" type="submit" value="Upload" />
-                </div>
+        <div class="content">
+            <img src="./assets/img/e-file.svg" class="e-file-icon" />
+            <form action="/upload-doc" method="post" enctype="multipart/form-data">
+
+                <input type="file" name="dokumen" required />
+
+                <select name="kategori" required>
+                    <option value="" disabled selected>-Kategori-</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+                <input type="submit" value="Upload" />
             </form>
         </div>
-        <table class="table table-bordered mt-1">
+        <table class="table table-bordered">
             <thead>
                 <tr>
                     <th scope="col">ID</th>
@@ -127,22 +118,20 @@
             <tbody>
                 {{#each documents}}
                     <tr id="dokumen-{{this.id_dokumen}}">
-                        <th scope="row">{{this.id_dokumen}}</th>
+                        <th>{{this.id_dokumen}}</th>
                         <td>{{this.nama}}</td>
                         <td>{{this.tanggal_masuk}}</td>
                         <td>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="validation-{{this.id_dokumen}}"
-                                    id="validation-{{this.id_dokumen}}-accept" value="accept">
-                                <label class="custom-control-label"
-                                    for="validation-{{this.id_dokumen}}-accept">Setujui</label>
-                            </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="validation-{{this.id_dokumen}}"
-                                    id="validation-{{this.id_dokumen}}-decline" value="decline">
-                                <label class="custom-control-label"
-                                    for="validation-{{this.id_dokumen}}-decline">Tolak</label>
-                            </div>
+
+                            <input type="radio" name="validation-{{this.id_dokumen}}"
+                                id="validation-{{this.id_dokumen}}-accept" value="accept">
+                            <label class="custom-control-label"
+                                for="validation-{{this.id_dokumen}}-accept">Setujui</label>
+
+                            <input type="radio" name="validation-{{this.id_dokumen}}"
+                                id="validation-{{this.id_dokumen}}-decline" value="decline">
+                            <label class="custom-control-label"
+                                for="validation-{{this.id_dokumen}}-decline">Tolak</label>
                             <button class="btn stylish-color text-light btn-sm" type="button"
                                 onclick="submitDoc('{{this.id_dokumen}}');">Submit</button>
                         </td>
@@ -154,15 +143,12 @@
 
     <!-- JQuery -->
     <script type="text/javascript" src="./assets/js/jquery.min.js"></script>
-    <!-- Bootstrap tooltips -->
-    <script type="text/javascript" src="./assets/js/popper.js"></script>
-    <!-- Bootstrap core JavaScript -->
-    <script type="text/javascript" src="./assets/js/bootstrap.min.js"></script>
-    <!-- MDB core JavaScript -->
-    <script type="text/javascript" src="./assets/js/mdb.min.js"></script>
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
         var a = "{{json documents}}"
         $(document).ready(() => {
+            $('.sidenav').sidenav();
             const url = new URLSearchParams(location.search);
             if (url.get("show") != null) {
                 $("#message").html(decodeURIComponent(url.get("message")));
