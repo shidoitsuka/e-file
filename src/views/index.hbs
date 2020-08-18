@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Dashboard | E-File</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="./assets/css/mdb.min.css" rel="stylesheet">
+    <style>
+        .navbar {
+            background-color: #1565c0;
+            color: white;
+        }
+
+        .popup-msg {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        .dataTables_filter {
+            position: absolute;
+            right: 5%;
+        }
+
+        .pagination {
+            position: absolute;
+            right: 5%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="alert popup-msg" role="alert">
+        <span id="message"></span>
+    </div>
+    <div class="container">
+        <header>
+
+            <nav class="navbar navbar-expand-lg navbar-dark scrolling-navbar">
+                <div class="navbar-nav mr-auto d-flex flex-row">
+                    <div class="nav-item">
+                        <a class="nav-link" href="#">Upload</a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link" href="#">Manager</a>
+                    </div>
+                </div>
+            </nav>
+
+        </header>
+
+        <div class="row content">
+            <div class="col-12">
+                <div class="table-container">
+                    <table class="table table-bordered" id="dtable">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Nama</th>
+                                <th scope="col">Kategori</th>
+                                <th scope="col">Tanggal Masuk</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Unduh</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each documents}}
+                                <tr>
+                                    <td>{{this.id_dokumen}}</td>
+                                    <td id="doc-{{this.id_dokumen}}">{{this.nama}}</td>
+                                    <td>{{this.kategori}}</td>
+                                    <td>{{this.tanggal_masuk}}</td>
+                                    <td>Status</td>
+                                    <td><a href="#" class="btn btn-sm" onclick="downloadDoc('{{this.id_dokumen}}', '{{this.file_blob}}');">Download</a>
+                                    </td>
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="./assets/js/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="./assets/js/popper.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="./assets/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="./assets/js/mdb.min.js"></script>
+    <!-- JQuery DataTable -->
+    <script type="text/javascript" src="./assets/js/datatables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#dtable").DataTable();
+            $(".dataTables_length").addClass("bs-select");
+            const url = new URLSearchParams(location.search);
+            if (url.get("show") != null) {
+                $("#message").html(decodeURIComponent(url.get("message")));
+                $(".popup-msg").addClass(`alert-${url.get("color")}`).fadeIn(300);
+            }
+            setTimeout(() => {
+                $(".popup-msg").removeClass(`alert-${url.get("color")}`).fadeOut(500);
+                $("#message").html("");
+            }, 3000);
+        });
+        function downloadDoc(id, blob) {
+            const fileName = $(`#doc-${id}`).html();
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Dashboard | E-File</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="./assets/css/mdb.min.css" rel="stylesheet">
+    <link href="./assets/css/datatables.min.css" rel="stylesheet">
+    <style>
+        .navbar {
+            background-color: #1565c0;
+            color: white;
+        }
+
+        .content {
+            margin-top: 4rem;
+            min-height: 90vh;
+        }
+
+        .side-navigation-container {
+            background-color: #0f4a8c;
+            height: 100vh;
+            width: 100%;
+            display: block;
+        }
+
+        .side-navigation-item {
+            width: 100%;
+            text-align: left;
+        }
+
+        .table-container {
+            height: 90vh;
+            margin-top: 3vh;
+            overflow: scroll;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid" style="position: fixed;">
+        <header>
+
+            <nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+                <div class="navbar-nav mr-auto d-flex flex-row">
+                    {{!-- <div class="nav-item">
+                        <a class="nav-link" href="#">Upload</a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link" href="#">Manager</a>
+                    </div> --}}
+                </div>
+                <div class="navbar-nav">
+                    <div class="nav-item">
+                        <a class="nav-link btn btn-sm btn-white text-dark px-3" href="/logout">Logout</a>
+                    </div>
+                </div>
+            </nav>
+
+        </header>
+
+        <div class="row content">
+            <div class="col-2 side-navigation-container">
+                <div class="side-navigation-content my-5 d-flex">
+                    <img height="auto" width="100px" class="mx-auto" src="./assets/img/e-file.svg" />
+                </div>
+                <div class="side-navigation-content d-flex">
+                    <a class="side-navigation-item btn btn-white" href="/dashboard"><i class="fas fa-file-medical"></i>
+                        &nbsp;Upload</a>
+                </div>
+                <div class="side-navigation-content d-flex">
+                    <button type="button" class="side-navigation-item btn btn-white" href="/validate" disabled><i
+                            class="fas fa-file-signature"></i>
+                        List</button>
+                </div>
+                <div class="side-navigation-content d-flex">
+                    <a class="side-navigation-item btn btn-white" href="/category"><i class="fas fa-file-alt"></i>
+                        &nbsp;&nbsp;Kategori</a>
+                </div>
+            </div>
+            <div class="col-10">
+                <div class="table-container">
+                    <table class="table table-bordered mt-1" id="dtable">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Nama Dokumen</th>
+                                <th scope="col">Kategori</th>
+                                <th scope="col">Tanggal Masuk</th>
+                                <th scope="col">Persetujuan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each documents}}
+                                <tr id="dokumen-{{this.id_dokumen}}">
+                                    <th scope="row">{{this.id_dokumen}}</th>
+                                    <td>{{this.nama}}</td>
+                                    <td>{{this.kategori}}</td>
+                                    <td>{{this.tanggal_masuk}}</td>
+                                    <td>
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" class="custom-control-input"
+                                                name="validation-{{this.id_dokumen}}"
+                                                id="validation-{{this.id_dokumen}}-accept" value="accept">
+                                            <label class="custom-control-label"
+                                                for="validation-{{this.id_dokumen}}-accept">Setujui</label>
+                                        </div>
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" class="custom-control-input"
+                                                name="validation-{{this.id_dokumen}}"
+                                                id="validation-{{this.id_dokumen}}-decline" value="decline">
+                                            <label class="custom-control-label"
+                                                for="validation-{{this.id_dokumen}}-decline">Tolak</label>
+                                        </div>
+                                        <button class="btn stylish-color text-light btn-sm" type="button"
+                                            onclick="submitDoc('{{this.id_dokumen}}');">Submit</button>
+                                    </td>
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="./assets/js/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="./assets/js/popper.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="./assets/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="./assets/js/mdb.min.js"></script>
+    <!-- JQuery DataTable -->
+    <script type="text/javascript" src="./assets/js/datatables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#dtable").DataTable();
+            $(".dataTables_length").addClass("bs-select");
+        });
+        function submitDoc(id) {
+            let status;
+            if ($(`#validation-${id}-accept:checked`).val() == undefined) status = "decline";
+            else status = "accept";
+            $.ajax({
+                url: "/validate-doc",
+                method: "POST",
+                data: {
+                    document_id: id,
+                    status,
+                    userLevel: document.cookie.split("; ").find(t => t.includes("level")).split("=")[1]
+                },
+                success: function (result) {
+                    if (result.status == 0) return alert("Tidak memiliki akses!");
+                    $(`#dokumen-${id}`).fadeOut(500);
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>

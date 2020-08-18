@@ -35,9 +35,9 @@
         }
 
         .popup-msg {
-            position: absolute;
+            position: fixed;
             bottom: 0;
-            right: 10px;
+            right: 0;
             z-index: 10;
         }
 
@@ -51,6 +51,22 @@
         .side-navigation-item {
             width: 100%;
             text-align: left;
+        }
+
+        .table-container {
+            height: 50vh;
+            margin-top: 3vh;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+
+        .dataTables_filter {
+            position: absolute;
+            right: 10%;
+        }
+        .pagination {
+            position: absolute;
+            right: 5%;
         }
     </style>
 </head>
@@ -86,44 +102,52 @@
                     <img height="auto" width="100px" class="mx-auto" src="./assets/img/e-file.svg" />
                 </div>
                 <div class="side-navigation-content d-flex">
-                    <button type="button" class="side-navigation-item btn btn-white" href="/dashboard" disabled><i
-                            class="fas fa-file-medical"></i>
-                        &nbsp;Upload</button>
+                    <a class="side-navigation-item btn btn-white" href="/dashboard"><i class="fas fa-file-medical"></i>
+                        &nbsp;Upload</a>
                 </div>
                 <div class="side-navigation-content d-flex">
                     <a class="side-navigation-item btn btn-white" href="/validate"><i class="fas fa-file-signature"></i>
                         List</a>
                 </div>
                 <div class="side-navigation-content d-flex">
-                    <a class="side-navigation-item btn btn-white" href="/category"><i class="fas fa-file-alt"></i>
-                        &nbsp;&nbsp;Kategori</a>
+                    <button type="button" class="side-navigation-item btn btn-white" href="/category" disabled><i
+                            class="fas fa-file-alt"></i>
+                        &nbsp;&nbsp;Kategori</button>
                 </div>
             </div>
             <div class="col-10">
-                <div class="col-12 d-flex justify-content-center my-4 my-lg-5">
-                    <img src="./assets/img/e-file.svg" class="img-fluid e-file-icon" />
+                <div class="col-12 d-flex justify-content-center mt-5">
+                    <h1 class="h1">Tambahkan Kategori</h1>
                 </div>
-                <form class="col-lg-6 mx-auto" action="/upload-doc" method="post" enctype="multipart/form-data">
-                    <div class="col-12 p-3">
-                        <div class="input-group">
-                            <div class="custom-file">
-                                <input type="file" name="dokumen" class="custom-file-input" required />
-                                <label class="custom-file-label">Pilih Dokumen</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 p-3">
-                        <select name="kategori" class="browser-default custom-select" required>
-                            <option value="" disabled selected>-Kategori-</option>
-                            {{#each kategori}}
-                                <option value="{{this.nama}}">{{this.nama}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
+                <form class="col-lg-6 mx-auto" action="/add-category" method="post" enctype="multipart/form-data">
+                    <label for="namaKategori">Kategori</label>
+                    <input type="text" id="namaKategori" name="categoryName" class="form-control" required />
                     <div class="col-12 submit-btn">
-                        <input class="btn btn-blue" type="submit" value="Upload" />
+                        <input class="btn btn-blue btn-sm" type="submit" value="Tambahkan Kategori" />
                     </div>
                 </form>
+                <div class="table-container">
+                    <table class="table table-bordered mt-3" id="dtable">
+                        <thead>
+                            <tr>
+                                <th style="width: 70%;" scope="col">Kategori</th>
+                                <th scope="col">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each kategori}}
+                                <tr id="kategori-{{this.id}}">
+                                    <td>{{this.nama}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm warning-color white-text">Edit</button>
+                                        <button type="button" class="btn btn-sm danger-color white-text"
+                                            onclick="deleteCategory('{{this.id}}');">Hapus</button>
+                                    </td>
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -136,8 +160,12 @@
     <script type="text/javascript" src="./assets/js/bootstrap.min.js"></script>
     <!-- MDB core JavaScript -->
     <script type="text/javascript" src="./assets/js/mdb.min.js"></script>
+    <!-- JQuery DataTable -->
+    <script type="text/javascript" src="./assets/js/datatables.min.js"></script>
     <script>
         $(document).ready(function () {
+            $("#dtable").DataTable();
+            $(".dataTables_length").addClass("bs-select");
             const url = new URLSearchParams(location.search);
             if (url.get("show") != null) {
                 $("#message").html(decodeURIComponent(url.get("message")));
@@ -147,7 +175,22 @@
                 $(".popup-msg").removeClass(`alert-${url.get("color")}`).fadeOut(500);
                 $("#message").html("");
             }, 3000);
-        });
+        })
+        function deleteCategory(id) {
+            $.ajax({
+                url: "/del-category",
+                method: "POST",
+                data: {
+                    id,
+                    userLevel: document.cookie.split("; ").find(t => t.includes("level")).split("=")[1]
+                },
+                success: function (result) {
+                    if (result.status == 0) return alert("Tidak memiliki akses!");
+                    $(`#kategori-${id}`).fadeOut(500);
+                    console.log(result)
+                }
+            })
+        }
     </script>
 </body>
 
