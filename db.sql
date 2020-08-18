@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 15, 2020 at 11:35 AM
+-- Generation Time: Aug 18, 2020 at 02:48 PM
 -- Server version: 10.4.13-MariaDB
 -- PHP Version: 7.4.8
 
@@ -31,7 +31,7 @@ CREATE TABLE `dokumen` (
   `nama` varchar(64) NOT NULL,
   `kategori` varchar(64) NOT NULL,
   `tanggal_masuk` varchar(128) NOT NULL,
-  `file_blob` mediumtext NOT NULL COMMENT '16mb max',
+  `dir` varchar(255) NOT NULL,
   `accept` int(1) NOT NULL,
   `decline` int(1) NOT NULL,
   `file_type` varchar(64) NOT NULL,

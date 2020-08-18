@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 const bodyParser = require("body-parser");
 const hbs = require("hbs");
 const upload = require("multer")();
@@ -29,6 +30,7 @@ app.use(cookieParser());
 app.set("views", path.join(__dirname, "src/views"));
 app.set("view engine", "hbs");
 app.use("/assets", express.static("assets"));
+app.use("/data", express.static("data"));
 
 app.get("/", (req, res) => {
   db.query("SELECT * FROM dokumen", (err, result) => {
@@ -119,16 +121,27 @@ app.post("/upload-doc", upload.single("dokumen"), (req, res) => {
   const fileName = dokumen.originalname;
   // prettier-ignore
   const fileType = dokumen.mimetype.slice(dokumen.mimetype.lastIndexOf("/") + 1);
-  const fileBlob = dokumen.buffer.toString("base64");
+  const fileBlob = dokumen.buffer;
   const tanggalMasuk = new Date();
+  const dir = `./data/${kategori}/${fileName}`;
+  if (!fs.existsSync(`./data/${kategori}`)) fs.mkdirSync(`./data/${kategori}`);
+  fs.writeFileSync(`./data/${kategori}/${fileName}`, fileBlob);
   // prettier-ignore
-  db.query(`INSERT INTO dokumen(nama, kategori, tanggal_masuk, file_blob, file_type) VALUES('${fileName}', '${kategori}','${tanggalMasuk}','${fileBlob}','${fileType}')`, (err, result) => {
+  db.query(`INSERT INTO dokumen(nama, kategori, tanggal_masuk, dir, file_type) VALUES('${fileName}', '${kategori}','${tanggalMasuk}','${dir}','${fileType}')`, (err, result) => {
       if (err)
         return console.error(err);
         // res.redirect(`/dashboard?show=true&message=${encodeURIComponent("Terjadi kesalahan!")}&color=danger`);
       res.redirect(`/dashboard?show=true&message=${encodeURIComponent("Sukses meng-upload dokumen!")}&color=success`);
     }
   );
+});
+
+app.post("/download-doc", (req, res) => {
+  const { id } = req.body;
+  console.log(id);
+  db.query(`SELECT dir FROM dokumen WHERE id_dokumen=${id}`, (err, result) => {
+    res.json({ result });
+  });
 });
 
 app.get("/login", (req, res) => {
