@@ -33,7 +33,7 @@ app.use("/assets", express.static("assets"));
 app.use("/data", express.static("data"));
 
 app.get("/", (req, res) => {
-  db.query("SELECT * FROM dokumen", (err, result) => {
+  db.query("SELECT * FROM dokumen WHERE accept=1", (err, result) => {
     res.render("index", { documents: result });
   });
 });
@@ -64,13 +64,12 @@ app.get("/validate", (req, res) => {
 
 app.post("/add-category", upload.none(), (req, res) => {
   const { categoryName } = req.body;
-  const { level } = req.cookies;
-  if (!(level > 0)) {
-    return res.redirect(`/category?show=true&message=${encodeURIComponent("Tidak Memiliki Hak Akses!")}&color=danger`);
-  }
+  // if (!(level > 0)) {
+  //   return res.redirect(`/category?show=true&message=${encodeURIComponent("Tidak Memiliki Hak Akses!")}&color=danger`);
+  // }
   // prettier-ignore
   db.query(`INSERT INTO kategori(nama) VALUES('${categoryName}')`, (err, result) => {
-    if (err) console.error(err);
+    if (err.sqlMessage.toLowerCase().includes("duplicate")) return res.redirect(`/category?show=true&message=${encodeURIComponent("Kategori sudah ada!")}&color=danger`);
     res.redirect(`/category?show=true&message=${encodeURIComponent("Berhasil Menambahkan Kategori!")}&color=success`);
   });
 });
