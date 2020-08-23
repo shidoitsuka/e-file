@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {{!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> --}}
     <title>Dashboard | E-File</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
@@ -64,6 +64,7 @@
             position: absolute;
             right: 10%;
         }
+
         .pagination {
             position: absolute;
             right: 5%;
@@ -131,20 +132,26 @@
                         <thead>
                             <tr>
                                 <th style="width: 70%;" scope="col">Kategori</th>
-                                <th scope="col">Aksi</th>
+                                {{#if show}}
+                                    <th scope="col">Aksi</th>
+                                {{/if}}
                             </tr>
                         </thead>
                         <tbody>
-                            {{#each kategori}}
-                                <tr id="kategori-{{this.id}}">
-                                    <td>{{this.nama}}</td>
-                                    <td>
-                                        {{!-- <button type="button" class="btn btn-sm warning-color white-text">Edit</button> --}}
-                                        <button type="button" class="btn btn-sm danger-color white-text"
-                                            onclick="deleteCategory('{{this.id}}');">Hapus</button>
-                                    </td>
-                                </tr>
-                            {{/each}}
+                            {{#if show}}
+                                {{#each kategori}}
+                                    <tr id="kategori-{{this.id}}">
+                                        <td>{{this.nama}}</td>
+
+                                        <td>
+                                            <button type="button" class="btn btn-sm danger-color white-text"
+                                                onclick="deleteCategory('{{this.id}}');">Hapus</button>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            {{else}}
+                                <div></div>
+                            {{/if}}
                         </tbody>
                     </table>
                 </div>

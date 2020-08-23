@@ -31,6 +31,13 @@
             width: 40rem;
         }
 
+        .popup-msg {
+            position: absolute;
+            bottom: 0;
+            right: 10px;
+            z-index: 10;
+        }
+
         .login-btn {
             text-align: right;
             margin-top: 5px;
@@ -39,6 +46,9 @@
 </head>
 
 <body>
+    <div class="alert popup-msg" role="alert">
+        <span id="message"></span>
+    </div>
     <div class="container">
         <form action="/login" method="post" enctype="multipart/form-data">
             <div class="card-container">
@@ -76,6 +86,19 @@
     <script type="text/javascript" src="./assets/js/bootstrap.min.js"></script>
     <!-- MDB core JavaScript -->
     <script type="text/javascript" src="./assets/js/mdb.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const url = new URLSearchParams(location.search);
+            if (url.get("show") != null) {
+                $("#message").html(decodeURIComponent(url.get("message")));
+                $(".popup-msg").addClass(`alert-${url.get("color")}`).fadeIn(300);
+            }
+            setTimeout(() => {
+                $(".popup-msg").removeClass(`alert-${url.get("color")}`).fadeOut(500);
+                $("#message").html("");
+            }, 3000);
+        });
+    </script>
 </body>
 
 </html>

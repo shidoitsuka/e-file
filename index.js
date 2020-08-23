@@ -9,6 +9,7 @@ const mysql = require("mysql");
 const app = express();
 // prettier-ignore
 const { host, port, dbHost, dbUsername, dbPassword, dbName } = require("./config.js");
+const { tmpdir } = require("os");
 const db = mysql.createConnection({
   host: dbHost,
   user: dbUsername,
@@ -48,39 +49,38 @@ app.get("/dashboard", (req, res) => {
 });
 
 app.get("/validate", (req, res) => {
-  const { user } = req.cookies;
+  const { user, level } = req.cookies;
   if (typeof user == "undefined") return res.redirect("/login");
-
+  let tmpData = [];
+  let status;
   // prettier-ignore
-  db.query(`SELECT id_dokumen, nama, tanggal_masuk FROM dokumen WHERE accept=0 AND decline=0`, (err, result) => {
-      if (err) console.error(err);
-      db.query(`SELECT id_dokumen, nama, tanggal_masuk, kategori FROM dokumen WHERE accept=0 AND decline=0`,
-        (err, secondResult) => {
-          if (err) console.error(err);
-          res.render("validate", { documents: secondResult });
-      });
+  db.query(`SELECT * FROM dokumen`, (err, result) => {
+    result.map(data => {
+      if (data.accept == 1) data.status = "Disetujui";
+      else if (data.decline == 1) data.status = "Ditolak";
+      else data.status = "Pending";
+      tmpData.push(data);
+    });
+    res.render("validate", { documents: tmpData, show: level > 0 });
   });
 });
 
 app.post("/add-category", upload.none(), (req, res) => {
   const { categoryName } = req.body;
-  // if (!(level > 0)) {
-  //   return res.redirect(`/category?show=true&message=${encodeURIComponent("Tidak Memiliki Hak Akses!")}&color=danger`);
-  // }
   // prettier-ignore
   db.query(`INSERT INTO kategori(nama) VALUES('${categoryName}')`, (err, result) => {
-    if (err.sqlMessage.toLowerCase().includes("duplicate")) return res.redirect(`/category?show=true&message=${encodeURIComponent("Kategori sudah ada!")}&color=danger`);
+    // if (err.sqlMessage.toLowerCase().includes("duplicate")) return res.redirect(`/category?show=true&message=${encodeURIComponent("Kategori sudah ada!")}&color=danger`);
     res.redirect(`/category?show=true&message=${encodeURIComponent("Berhasil Menambahkan Kategori!")}&color=success`);
   });
 });
 
 app.get("/category", (req, res) => {
-  const { user } = req.cookies;
+  const { user, level } = req.cookies;
   if (typeof user == "undefined") return res.redirect("/login");
   // prettier-ignore
   db.query(`SELECT id, nama FROM kategori`, (err, result) => {
       if (err) console.error(err);
-      res.render("category", { kategori: result });
+      res.render("category", { kategori: result, show: level > 0 });
   });
 });
 
@@ -95,12 +95,12 @@ app.post("/validate-doc", (req, res) => {
   if (!(userLevel > 0)) return res.json({ status: 0 });
   // prettier-ignore
   if (status == "accept") {
-    db.query(`UPDATE dokumen SET accept=1 WHERE id_dokumen=${document_id}`, (_) => {
-      res.json({ status: 1 });
+    db.query(`UPDATE dokumen SET accept=1, decline=0 WHERE id=${document_id}`, (_) => {
+      res.redirect(`/validate?show=true&message=${encodeURIComponent("Berhasil Menyetujui Dokumen!")}&color=success`);
     });
   } else {
-    db.query(`UPDATE dokumen SET decline=1 WHERE id_dokumen=${document_id}`, (_) => {
-      res.json({ status: 1 });
+    db.query(`UPDATE dokumen SET accept=0, decline=1 WHERE id=${document_id}`, (_) => {
+      res.redirect(`/validate?show=true&message=${encodeURIComponent("Berhasil Menolak Dokumen!")}&color=success`);
     });
   }
 });
@@ -138,7 +138,7 @@ app.post("/upload-doc", upload.single("dokumen"), (req, res) => {
 app.post("/download-doc", (req, res) => {
   const { id } = req.body;
   console.log(id);
-  db.query(`SELECT dir FROM dokumen WHERE id_dokumen=${id}`, (err, result) => {
+  db.query(`SELECT dir FROM dokumen WHERE id=${id}`, (err, result) => {
     res.json({ result });
   });
 });
@@ -151,11 +151,9 @@ app.get("/login", (req, res) => {
 
 app.post("/login", upload.none(), (req, res) => {
   const { username, password } = req.body;
-  db.query(
-    `SELECT username, password, level FROM user WHERE username='${username}' AND password='${password}'`,
-    (err, result) => {
-      if (!result.length)
-        return res.send("Username atau Password tidak tepat!");
+  // prettier-ignore
+  db.query(`SELECT username, password, level FROM user WHERE username='${username}' AND password='${password}'`, (err, result) => { 
+      if (!result.length) return res.redirect(`/login?show=true&message=${encodeURIComponent("Username/password salah atau tidak terdaftar!")}&color=danger`);
       // one hour session
       res.cookie("user", username, { maxAge: 3600000 });
       res.cookie("level", result[0].level, { maxAge: 3600000 });

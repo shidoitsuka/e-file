@@ -78,12 +78,12 @@
                         <tbody>
                             {{#each documents}}
                                 <tr>
-                                    <td>{{this.id_dokumen}}</td>
-                                    <td id="doc-{{this.id_dokumen}}">{{this.nama}}</td>
+                                    <td>{{this.id}}</td>
+                                    <td id="doc-{{this.id}}">{{this.nama}}</td>
                                     <td>{{this.kategori}}</td>
                                     <td>{{this.tanggal_masuk}}</td>
                                     <td>Status</td>
-                                    <td><button type="button" class="btn btn-sm btn-blue" onclick="downloadDoc('{{this.id_dokumen}}');">Download</button>
+                                    <td><button type="button" class="btn btn-sm btn-blue" onclick="downloadDoc('{{this.id}}');">Download</button>
                                     </td>
                                 </tr>
                             {{/each}}

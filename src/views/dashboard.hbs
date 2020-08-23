@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {{!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> --}}
     <title>Dashboard | E-File</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
@@ -138,8 +138,6 @@
     <script type="text/javascript" src="./assets/js/mdb.min.js"></script>
     <script>
         $(document).ready(function () {
-            const userLevel = document.cookie.split("; ").find(t => t.includes("level")).split("=")[1];
-            if (userLevel > 0) return location.href = "validate";
             const url = new URLSearchParams(location.search);
             if (url.get("show") != null) {
                 $("#message").html(decodeURIComponent(url.get("message")));

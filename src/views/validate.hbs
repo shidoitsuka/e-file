@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {{!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> --}}
     <title>Dashboard | E-File</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
@@ -42,10 +42,32 @@
             margin-top: 3vh;
             overflow: scroll;
         }
+
+        .popup-msg {
+            position: absolute;
+            bottom: 0;
+            right: 10px;
+            z-index: 10;
+        }
+
+        .Disetujui {
+            background: #00C851;
+        }
+
+        .Ditolak {
+            background: #ff4444;
+        }
+
+        .Pending {
+            background: #ffbb33;
+        }
     </style>
 </head>
 
 <body>
+    <div class="alert popup-msg" role="alert">
+        <span id="message"></span>
+    </div>
     <div class="container-fluid" style="position: fixed;">
         <header>
 
@@ -95,36 +117,53 @@
                                 <th scope="col">Nama Dokumen</th>
                                 <th scope="col">Kategori</th>
                                 <th scope="col">Tanggal Masuk</th>
-                                <th scope="col">Persetujuan</th>
+                                <th scope="col">Status</th>
+                                {{#if show}}
+                                    <th scope="col">Persetujuan</th>
+                                {{/if}}
                             </tr>
                         </thead>
                         <tbody>
-                            {{#each documents}}
-                                <tr id="dokumen-{{this.id_dokumen}}">
-                                    <th scope="row">{{this.id_dokumen}}</th>
-                                    <td>{{this.nama}}</td>
-                                    <td>{{this.kategori}}</td>
-                                    <td>{{this.tanggal_masuk}}</td>
-                                    <td>
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input"
-                                                name="validation-{{this.id_dokumen}}"
-                                                id="validation-{{this.id_dokumen}}-accept" value="accept">
-                                            <label class="custom-control-label"
-                                                for="validation-{{this.id_dokumen}}-accept">Setujui</label>
-                                        </div>
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input"
-                                                name="validation-{{this.id_dokumen}}"
-                                                id="validation-{{this.id_dokumen}}-decline" value="decline">
-                                            <label class="custom-control-label"
-                                                for="validation-{{this.id_dokumen}}-decline">Tolak</label>
-                                        </div>
-                                        <button class="btn stylish-color text-light btn-sm" type="button"
-                                            onclick="submitDoc('{{this.id_dokumen}}');">Submit</button>
-                                    </td>
-                                </tr>
-                            {{/each}}
+                            {{#if show}}
+                                {{#each documents}}
+                                    <tr id="dokumen-{{this.id}}">
+                                        <th scope="row">{{this.id}}</th>
+                                        <td>{{this.nama}}</td>
+                                        <td>{{this.kategori}}</td>
+                                        <td>{{this.tanggal_masuk}}</td>
+                                        <td class="{{this.status}}">{{this.status}}</td>
+
+                                        <td>
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input"
+                                                    name="validation-{{this.id}}"
+                                                    id="validation-{{this.id}}-accept" value="accept">
+                                                <label class="custom-control-label"
+                                                    for="validation-{{this.id}}-accept">Setujui</label>
+                                            </div>
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input"
+                                                    name="validation-{{this.id}}"
+                                                    id="validation-{{this.id}}-decline" value="decline">
+                                                <label class="custom-control-label"
+                                                    for="validation-{{this.id}}-decline">Tolak</label>
+                                            </div>
+                                            <button class="btn stylish-color text-light btn-sm" type="button"
+                                                onclick="submitDoc('{{this.id}}');">Submit</button>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            {{else}}
+                                {{#each documents}}
+                                    <tr id="dokumen-{{this.id}}">
+                                        <th scope="row">{{this.id}}</th>
+                                        <td>{{this.nama}}</td>
+                                        <td>{{this.kategori}}</td>
+                                        <td>{{this.tanggal_masuk}}</td>
+                                        <td class="{{this.status}}">{{this.status}}</td>
+                                    </tr>
+                                {{/each}}
+                            {{/if}}
                         </tbody>
                     </table>
                 </div>
@@ -144,8 +183,19 @@
     <script type="text/javascript" src="./assets/js/datatables.min.js"></script>
     <script>
         $(document).ready(function () {
-            $("#dtable").DataTable();
+            $("#dtable").DataTable({
+                "order": [[3, "desc"]]
+            });
             $(".dataTables_length").addClass("bs-select");
+            const url = new URLSearchParams(location.search);
+            if (url.get("show") != null) {
+                $("#message").html(decodeURIComponent(url.get("message")));
+                $(".popup-msg").addClass(`alert-${url.get("color")}`).fadeIn(300);
+            }
+            setTimeout(() => {
+                $(".popup-msg").removeClass(`alert-${url.get("color")}`).fadeOut(500);
+                $("#message").html("");
+            }, 3000);
         });
         function submitDoc(id) {
             let status;
@@ -160,8 +210,7 @@
                     userLevel: document.cookie.split("; ").find(t => t.includes("level")).split("=")[1]
                 },
                 success: function (result) {
-                    if (result.status == 0) return alert("Tidak memiliki akses!");
-                    $(`#dokumen-${id}`).fadeOut(500);
+                    location.href = `/validate?show=true&message=${encodeURIComponent("Operasi Berhasil!")}&color=success`;
                 }
             })
         }
