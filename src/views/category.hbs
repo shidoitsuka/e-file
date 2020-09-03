@@ -42,15 +42,27 @@
         }
 
         .side-navigation-container {
-            background-color: #0f4a8c;
+            background-color: #242424;
             height: 100vh;
             width: 100%;
             display: block;
+            padding: 0;
         }
 
-        .side-navigation-item {
+        .side-navigation-content {
+            margin-top: 20px;
+        }
+
+        .side-navigation-btn {
+            background: #fff;
             width: 100%;
-            text-align: left;
+            padding: 17px;
+            text-transform: capitalize;
+            color: black;
+        }
+
+        .side-navigation-btn.selected {
+            background: rgb(172, 172, 172);
         }
 
         .table-container {
@@ -81,12 +93,6 @@
 
             <nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
                 <div class="navbar-nav mr-auto d-flex flex-row">
-                    {{!-- <div class="nav-item">
-                        <a class="nav-link" href="#">Upload</a>
-                    </div>
-                    <div class="nav-item">
-                        <a class="nav-link" href="#">Manager</a>
-                    </div> --}}
                 </div>
                 <div class="navbar-nav">
                     <div class="nav-item">
@@ -100,21 +106,21 @@
         <div class="row content">
             <div class="col-2 side-navigation-container">
                 <div class="side-navigation-content my-5 d-flex">
-                    <img height="auto" width="100px" class="mx-auto" src="./assets/img/e-file.svg" />
+                    <img height="auto" width="100px" class="mx-auto" src="./assets/img/e-file-dark.svg" />
                 </div>
+
                 <div class="side-navigation-content d-flex">
-                    <a class="side-navigation-item btn btn-white" href="/dashboard"><i class="fas fa-file-medical"></i>
-                        &nbsp;Upload</a>
+                    <a href="/dashboard" class="side-navigation-btn">Upload</a>
                 </div>
+
                 <div class="side-navigation-content d-flex">
-                    <a class="side-navigation-item btn btn-white" href="/validate"><i class="fas fa-file-signature"></i>
-                        List</a>
+                    <a href="/validate" class="side-navigation-btn">List</a>
                 </div>
+
                 <div class="side-navigation-content d-flex">
-                    <button type="button" class="side-navigation-item btn btn-white" href="/category" disabled><i
-                            class="fas fa-file-alt"></i>
-                        &nbsp;&nbsp;Kategori</button>
+                    <a href="/category" class="side-navigation-btn selected">Kategori</a>
                 </div>
+
             </div>
             <div class="col-10">
                 <div class="col-12 d-flex justify-content-center mt-5">
@@ -129,7 +135,7 @@
                 </form>
                 <div class="table-container">
                     <table class="table table-bordered mt-3" id="dtable">
-                        <thead>
+                        <thead class="elegant-color white-text">
                             <tr>
                                 <th style="width: 70%;" scope="col">Kategori</th>
                                 {{#if show}}
@@ -150,7 +156,11 @@
                                     </tr>
                                 {{/each}}
                             {{else}}
-                                <div></div>
+                                {{#each kategori}}
+                                    <tr id="kategori-{{this.id}}">
+                                        <td>{{this.nama}}</td>
+                                    </tr>
+                                {{/each}}
                             {{/if}}
                         </tbody>
                     </table>

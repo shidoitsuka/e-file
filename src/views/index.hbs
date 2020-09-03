@@ -14,6 +14,14 @@
     <!-- Material Design Bootstrap -->
     <link href="./assets/css/mdb.min.css" rel="stylesheet">
     <style>
+        body {
+            background: url("./assets/img/background.jpg");
+            background-size: auto 100vh;
+            
+        }
+        .container {
+            background: white;
+        }
         .navbar {
             background-color: #1565c0;
             color: white;
@@ -50,12 +58,6 @@
                     <div class="nav-item">
                         <h2>E-file</h2>
                     </div>
-                    {{!-- <div class="nav-item">
-                        <a class="nav-link" href="#">Upload</a>
-                    </div>
-                    <div class="nav-item">
-                        <a class="nav-link" href="#">Manager</a>
-                    </div> --}}
                 </div>
             </nav>
 
@@ -83,7 +85,8 @@
                                     <td>{{this.kategori}}</td>
                                     <td>{{this.tanggal_masuk}}</td>
                                     <td>Status</td>
-                                    <td><button type="button" class="btn btn-sm btn-blue" onclick="downloadDoc('{{this.id}}');">Download</button>
+                                    <td class="text-center"><button type="button" class="btn btn-sm btn-blue"
+                                            onclick="downloadDoc('{{this.id}}');">Unduh</button>
                                     </td>
                                 </tr>
                             {{/each}}
@@ -121,14 +124,14 @@
         function downloadDoc(id) {
             const fileName = $(`#doc-${id}`).html();
             $.ajax({
-               url: "/download-doc",
-               method: "POST",
-               data: {
-                   id
-               },
-               success: function(result) {
-                   location.href = result.result[0].dir;
-               }
+                url: "/download-doc",
+                method: "POST",
+                data: {
+                    id
+                },
+                success: function (result) {
+                    location.href = result.result[0].dir;
+                }
             });
         }
     </script>

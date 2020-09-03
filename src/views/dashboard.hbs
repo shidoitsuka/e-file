@@ -42,15 +42,27 @@
         }
 
         .side-navigation-container {
-            background-color: #0f4a8c;
+            background-color: #242424;
             height: 100vh;
             width: 100%;
             display: block;
+            padding: 0;
         }
 
-        .side-navigation-item {
+        .side-navigation-content {
+            margin-top: 20px;
+        }
+
+        .side-navigation-btn {
+            background: #fff;
             width: 100%;
-            text-align: left;
+            padding: 17px;
+            text-transform: capitalize;
+            color: black;
+        }
+
+        .side-navigation-btn.selected {
+            background: rgb(172, 172, 172);
         }
     </style>
 </head>
@@ -83,21 +95,21 @@
         <div class="row content">
             <div class="col-2 side-navigation-container">
                 <div class="side-navigation-content my-5 d-flex">
-                    <img height="auto" width="100px" class="mx-auto" src="./assets/img/e-file.svg" />
+                    <img height="auto" width="100px" class="mx-auto" src="./assets/img/e-file-dark.svg" />
                 </div>
+                
                 <div class="side-navigation-content d-flex">
-                    <button type="button" class="side-navigation-item btn btn-white" href="/dashboard" disabled><i
-                            class="fas fa-file-medical"></i>
-                        &nbsp;Upload</button>
+                    <a href="/dashboard" class="side-navigation-btn selected">Upload</a>
                 </div>
+
                 <div class="side-navigation-content d-flex">
-                    <a class="side-navigation-item btn btn-white" href="/validate"><i class="fas fa-file-signature"></i>
-                        List</a>
+                    <a href="/validate" class="side-navigation-btn">List</a>
                 </div>
+
                 <div class="side-navigation-content d-flex">
-                    <a class="side-navigation-item btn btn-white" href="/category"><i class="fas fa-file-alt"></i>
-                        &nbsp;&nbsp;Kategori</a>
+                    <a href="/category" class="side-navigation-btn">Kategori</a>
                 </div>
+
             </div>
             <div class="col-10">
                 <div class="col-12 d-flex justify-content-center my-4 my-lg-5">
