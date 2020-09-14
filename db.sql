@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 18, 2020 at 02:48 PM
--- Server version: 10.4.13-MariaDB
--- PHP Version: 7.4.8
+-- Waktu pembuatan: 14 Sep 2020 pada 08.43
+-- Versi server: 10.4.13-MariaDB
+-- Versi PHP: 7.4.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dokumen`
+-- Struktur dari tabel `dokumen`
 --
 
 CREATE TABLE `dokumen` (
@@ -35,13 +35,13 @@ CREATE TABLE `dokumen` (
   `accept` int(1) NOT NULL,
   `decline` int(1) NOT NULL,
   `file_type` varchar(64) NOT NULL,
-  `id_dokumen` int(11) NOT NULL
+  `id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kategori`
+-- Struktur dari tabel `kategori`
 --
 
 CREATE TABLE `kategori` (
@@ -52,7 +52,7 @@ CREATE TABLE `kategori` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- Struktur dari tabel `user`
 --
 
 CREATE TABLE `user` (
@@ -62,41 +62,42 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `user`
+-- Dumping data untuk tabel `user`
 --
 
 INSERT INTO `user` (`username`, `password`, `level`) VALUES
-('standinshd', 'anime', 1),
-('user', 'user', 0);
+('manager', 'manager123', 1),
+('admin', 'admin123', 0);
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `dokumen`
+-- Indeks untuk tabel `dokumen`
 --
 ALTER TABLE `dokumen`
-  ADD PRIMARY KEY (`id_dokumen`);
-
---
--- Indexes for table `kategori`
---
-ALTER TABLE `kategori`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- Indeks untuk tabel `kategori`
+--
+ALTER TABLE `kategori`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `nama` (`nama`);
+
+--
+-- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT for table `dokumen`
+-- AUTO_INCREMENT untuk tabel `dokumen`
 --
 ALTER TABLE `dokumen`
-  MODIFY `id_dokumen` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `kategori`
+-- AUTO_INCREMENT untuk tabel `kategori`
 --
 ALTER TABLE `kategori`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
