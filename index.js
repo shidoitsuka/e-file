@@ -17,8 +17,8 @@ const db = mysql.createConnection({
   database: dbName,
 });
 db.connect((err) => {
-  if (err) return console.error(`Failed to connect MySQL : ${err.stack}`);
-  console.log("Successfully connected to MySQL!");
+  if (err) return console.error(`Gagal terkoneksi ke MySQL : ${err.stack}`);
+  console.log("Berhasil terkoneksi ke MySQL!");
 });
 
 hbs.registerHelper("json", function (context) {
@@ -178,4 +178,4 @@ app.post("/register", upload.none(), (req, res) => {
   );
 });
 
-app.listen(port, host, console.log("listening on 3000"));
+app.listen(port, host, console.log(`Aplikasi berhasil dijalankan!\nBuka ${host}:${port} di browser anda.`));
